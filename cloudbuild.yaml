@@ -1,0 +1,45 @@
+# Copyright 2020 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+
+steps:
+# Install dependencies
+- name: node
+  entrypoint: npm
+  args: ["install"]
+
+# Run unit tests
+- name: node
+  entrypoint: npm
+  args: ["run", "test"]
+
+# Docker Build
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build',
+          '--build-arg', 'VITE_CATALOG_API_URL=${_CATALOG_API_URL}',
+          '--build-arg', 'VITE_CART_API_URL=${_CART_API_URL}',
+          '--build-arg', 'VITE_RECOMMENDATIONS_API_URL=${_RECOMMENDATIONS_API_URL}',
+          '--build-arg', 'VITE_CHECKOUT_API_URL=${_CHECKOUT_API_URL}',
+          '-t',
+          'us-central1-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO}/${_SERVICE}:${SHORT_SHA}', '.']
+
+# Tag latest
+# - name: 'gcr.io/cloud-builders/docker'
+#   args: ['tag', 'us-central1-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO}/${_SERVICE}:${SHORT_SHA}',
+#           'us-central1-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO}/${_SERVICE}:latest']
+
+# # Save test logs to Google Cloud Storage
+# artifacts:
+#   objects:
+#     location: gs://${_BUCKET_NAME}/
+#     paths:
+#     - ${SHORT_SHA}_test_log.xml
+
+# Store images in Google Artifact Registry
+images:
+- us-central1-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO}/${_SERVICE}:${SHORT_SHA}
+# - us-central1-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO}/${_SERVICE}:latest
+
+# # options
+options:
+  logging: CLOUD_LOGGING_ONLY
