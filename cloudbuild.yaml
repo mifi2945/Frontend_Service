@@ -6,7 +6,7 @@ steps:
 # Install dependencies
 - name: node
   entrypoint: npm
-  args: ["install"]
+  args: ["ci"]
 
 # Run unit tests
 - name: node
