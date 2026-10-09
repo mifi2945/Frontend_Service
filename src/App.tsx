@@ -82,7 +82,7 @@ function App() {
   }
 
   const navItems: [View, string][] = [['catalog', 'Catalog'], ['recommendations', 'Recommendations'], ['cart', `Cart${cart.length ? ` · ${cart.length}` : ''}`], ['checkout', 'Checkout']]
-  return <div className="app-shell"><header className="site-header"><div><p className="brand-mark">FIELD / STORE</p><h1>Useful things, chosen well.</h1></div><div className="session-pill">Session <strong>#{userId}</strong></div></header><nav className="main-nav" aria-label="Store sections">{navItems.map(([key, label]) => <button type="button" className={view === key ? 'active' : ''} onClick={() => setView(key)} key={key}>{label}</button>)}</nav>{error && <div className="global-error" role="alert">{error}<button type="button" onClick={() => setError('')} aria-label="Dismiss error">×</button></div>}<main>{renderView()}</main><footer><span>FIELD / STORE</span><span>Session data stays in this browser session.</span></footer></div>
+  return <div className="app-shell"><header className="site-header"><div><p className="brand-mark">THE BEST STORE</p><h1>Useful things, chosen well.</h1></div><div className="session-pill">Session <strong>#{userId}</strong></div></header><nav className="main-nav" aria-label="Store sections">{navItems.map(([key, label]) => <button type="button" className={view === key ? 'active' : ''} onClick={() => setView(key)} key={key}>{label}</button>)}</nav>{error && <div className="global-error" role="alert">{error}<button type="button" onClick={() => setError('')} aria-label="Dismiss error">×</button></div>}<main>{renderView()}</main><footer><span>THE BEST STORE</span><span>Session data stays in this browser session.</span></footer></div>
 }
 
 export default App
