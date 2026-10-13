@@ -74,7 +74,7 @@ describe('API client', () => {
     vi.mocked(fetch).mockResolvedValue(response({ checkoutStatus: 1 }))
 
     await checkout(835974, form)
-    expect(fetch).toHaveBeenCalledWith('https://shared.example/checkout/835974', expect.objectContaining({
+    expect(fetch).toHaveBeenCalledWith('https://shared.example/checkout', expect.objectContaining({
       method: 'POST',
       body: JSON.stringify({
         userid: 835974,
