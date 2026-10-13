@@ -38,6 +38,7 @@ steps:
   - ${_SERVICE}
   - --image=us-central1-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO}/${_SERVICE}:${SHORT_SHA}
   - --region=${_REGION}
+  - --service-account=cloud-run-service-account@engaged-upgrade-508218-r4.iam.gserviceaccount.com
   - --platform=managed
   - --quiet
 
