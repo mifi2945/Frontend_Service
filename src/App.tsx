@@ -165,6 +165,9 @@ function App() {
   const setField = (field: keyof CheckoutForm, value: string) =>
     setCheckoutForm((current) => ({ ...current, [field]: value }))
 
+  const clearFields = () =>
+    setCheckoutForm(emptyCheckout)
+
   const productGrid = (items: Product[]) => (
     <div className="product-grid">
       {items.map((product) => (
@@ -344,6 +347,9 @@ function App() {
               onChange={(event) => setField('Country', event.target.value)}
             />
           </label>
+          <button type="button" onClick={clearFields}>
+            Clear Fields
+          </button>
           <button className="wide-field" type="submit" disabled={checkoutLoading || cart.length === 0}>
             {checkoutLoading ? 'Processing...' : 'Place test order'}
           </button>

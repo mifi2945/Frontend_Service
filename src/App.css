@@ -43,7 +43,7 @@ main { flex: 1; }
 .search-form input:focus, .checkout-form input:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
 button { padding: 12px 16px; border: 0; color: #fff; background: var(--ink); font: 600 13px var(--sans); cursor: pointer; }
 button:hover { background: var(--accent); }
-button:disabled { cursor: wait; opacity: .55; }
+button:disabled { cursor: not-allowed; opacity: .55; background: var(--ink);}
 .product-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
 .product-card { min-height: 235px; padding: 22px; display: flex; flex-direction: column; border: 1px solid var(--line); background: var(--paper); }
 .product-card:hover { border-color: var(--accent); transform: translateY(-2px); transition: transform .2s ease, border-color .2s ease; }
