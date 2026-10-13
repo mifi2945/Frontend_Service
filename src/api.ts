@@ -66,7 +66,7 @@ export function getRecommendations(userId: number): Promise<Product[]> {
 }
 
 export function checkout(userId: number, form: CheckoutForm): Promise<CheckoutResponse> {
-  return request<CheckoutResponse>('checkout', `/checkout/${userId}`, {
+  return request<CheckoutResponse>('checkout', `/checkout`, {
     method: 'POST',
     body: JSON.stringify({
       userid: userId,
