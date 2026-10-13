@@ -66,12 +66,12 @@ describe('API client', () => {
     const form: CheckoutForm = {
       cardno: '123456',
       securityCode: '123',
-      Expdate: '02/29',
-      Address: '42',
-      Street: 'Main Street',
-      Country: 'US',
+      expDate: '02/29',
+      address: '42',
+      street: 'Main Street',
+      country: 'US',
     }
-    vi.mocked(fetch).mockResolvedValue(response({ checkoutStatus: 1 }))
+    vi.mocked(fetch).mockResolvedValue(response({ checkoutStauts: 1 }))
 
     await checkout(835974, form)
     expect(fetch).toHaveBeenCalledWith('https://shared.example/checkout', expect.objectContaining({
@@ -80,10 +80,10 @@ describe('API client', () => {
         userid: 835974,
         cardno: 123456,
         securityCode: 123,
-        Expdate: '02/29',
-        Address: 42,
-        Street: 'Main Street',
-        Country: 'US',
+        expDate: '02/29',
+        address: 42,
+        street: 'Main Street',
+        country: 'US',
       }),
     }))
   })

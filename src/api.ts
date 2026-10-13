@@ -1,10 +1,11 @@
-import type { ApiService, CheckoutForm, CheckoutResponse, Product } from './types'
+import type { ApiService, CheckoutForm, CheckoutResponse, Product, ShippingCost } from './types'
 
 const serviceVariables: Record<ApiService, string> = {
   catalog: 'VITE_CATALOG_API_URL',
   cart: 'VITE_CART_API_URL',
   recommendations: 'VITE_RECOMMENDATIONS_API_URL',
   checkout: 'VITE_CHECKOUT_API_URL',
+  shipping: 'VITE_SHIPPING_API_URL'
 }
 
 function getBaseUrl(service: ApiService): string {
@@ -14,6 +15,7 @@ function getBaseUrl(service: ApiService): string {
 }
 
 function getUrl(service: ApiService, path: string): string {
+  // will return '/checkout` for example, and nginx will route the proxy
   return `${getBaseUrl(service)}${path}`
 }
 
@@ -65,6 +67,10 @@ export function getRecommendations(userId: number): Promise<Product[]> {
   return request<Product[]>('recommendations', `/recommendations/${userId}`)
 }
 
+export function getShippingCost(userId: number): Promise<ShippingCost> {
+  return request<ShippingCost>('shipping', `/shipping/${userId}`)
+}
+
 export function checkout(userId: number, form: CheckoutForm): Promise<CheckoutResponse> {
   return request<CheckoutResponse>('checkout', `/checkout`, {
     method: 'POST',
@@ -72,10 +78,10 @@ export function checkout(userId: number, form: CheckoutForm): Promise<CheckoutRe
       userid: userId,
       cardno: Number(form.cardno),
       securityCode: Number(form.securityCode),
-      Expdate: form.Expdate,
-      Address: Number(form.Address),
-      Street: form.Street.trim(),
-      Country: form.Country.trim(),
+      expDate: form.expDate,
+      address: Number(form.address),
+      street: form.street.trim(),
+      country: form.country.trim(),
     }),
   })
 }

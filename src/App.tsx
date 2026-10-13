@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { SubmitEvent } from 'react'
-import { addToCart, checkout, clearCart, getCart, getProducts, getRecommendations } from './api'
+import { addToCart, checkout, clearCart, getCart, getProducts, getRecommendations, getShippingCost } from './api'
 import './App.css'
 import { getSessionUserId } from './session'
 import type { CheckoutForm, CheckoutResponse, Product } from './types'
@@ -10,10 +10,10 @@ type View = 'catalog' | 'recommendations' | 'cart' | 'checkout'
 const emptyCheckout: CheckoutForm = {
   cardno: '',
   securityCode: '',
-  Expdate: '',
-  Address: '',
-  Street: '',
-  Country: '',
+  expDate: '',
+  address: '',
+  street: '',
+  country: '',
 }
 
 const digitsOnly = (value: string) => value.replace(/\D/g, '')
@@ -77,11 +77,13 @@ function App() {
   const [checkoutResult, setCheckoutResult] = useState<CheckoutResponse | null>(null)
   const [checkoutError, setCheckoutError] = useState('')
   const [checkoutLoading, setCheckoutLoading] = useState(false)
+  const [shippingCost, setShippingCost] = useState(0)
 
   const loadCartAndRecommendations = async () => {
-    const [cartResult, recommendationResult] = await Promise.allSettled([
+    const [cartResult, recommendationResult, shippingResult] = await Promise.allSettled([
       getCart(userId),
       getRecommendations(userId),
+      getShippingCost(userId),
     ])
 
     if (cartResult.status === 'fulfilled') {
@@ -90,6 +92,10 @@ function App() {
 
     if (recommendationResult.status === 'fulfilled') {
       setRecommendations(recommendationResult.value)
+    }
+
+    if (shippingResult.status === 'fulfilled') {
+      setShippingCost(shippingResult.value.shippingCost)
     }
   }
 
@@ -136,6 +142,7 @@ function App() {
       await clearCart(userId)
       setCart([])
       setRecommendations([])
+      setShippingCost(0)
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : 'Unable to clear cart')
     }
@@ -151,9 +158,10 @@ function App() {
       const result = await checkout(userId, checkoutForm)
       setCheckoutResult(result)
 
-      if (result.checkoutStatus === 1) {
+      if (result.checkoutStauts === 1) {
         setCart([])
         setCheckoutForm(emptyCheckout)
+        setShippingCost(0)
       }
     } catch (reason) {
       setCheckoutError(reason instanceof Error ? reason.message : 'Checkout failed')
@@ -180,6 +188,9 @@ function App() {
       ))}
     </div>
   )
+
+  const cartSubtotal = cart.reduce((total, product) => total + product.price, 0)
+  const cartTotal = cartSubtotal + shippingCost
 
   const renderView = () => {
     if (loading && view === 'catalog' && products.length === 0) {
@@ -254,7 +265,7 @@ function App() {
               <div className="cart-summary">
                 <span>Subtotal</span>
                 <strong>
-                  ${cart.reduce((total, product) => total + product.price, 0).toFixed(2)}
+                  ${cartSubtotal.toFixed(2)}
                 </strong>
               </div>
               <div className="action-row">
@@ -280,7 +291,18 @@ function App() {
             <p className="eyebrow">Test transaction</p>
             <h2>Checkout.</h2>
           </div>
-          <span>{cart.length} items</span>
+          <div className="checkout-summary">
+            <span>{cart.length} items</span>
+            <span>
+              Sub-total: ${cartSubtotal.toFixed(2)}
+            </span>
+            <span>
+              Shipping: ${shippingCost.toFixed(2)}
+            </span>
+            <span>
+              Total: ${cartTotal.toFixed(2)}
+            </span>
+          </div>
         </div>
         <p className="form-note">
           Use fake details only. This form sends a test checkout request to the configured service.
@@ -316,8 +338,8 @@ function App() {
               inputMode="numeric"
               pattern="[0-9]{2}/[0-9]{2}"
               maxLength={5}
-              value={checkoutForm.Expdate}
-              onChange={(event) => setField('Expdate', formatExpiration(event.target.value))}
+              value={checkoutForm.expDate}
+              onChange={(event) => setField('expDate', formatExpiration(event.target.value))}
             />
           </label>
           <label>
@@ -327,24 +349,24 @@ function App() {
               type="text"
               inputMode="numeric"
               pattern="[0-9]*"
-              value={checkoutForm.Address}
-              onChange={(event) => setField('Address', digitsOnly(event.target.value))}
+              value={checkoutForm.address}
+              onChange={(event) => setField('address', digitsOnly(event.target.value))}
             />
           </label>
           <label className="wide-field">
             Street
             <input
               required
-              value={checkoutForm.Street}
-              onChange={(event) => setField('Street', event.target.value)}
+              value={checkoutForm.street}
+              onChange={(event) => setField('street', event.target.value)}
             />
           </label>
           <label>
             Country
             <input
               required
-              value={checkoutForm.Country}
-              onChange={(event) => setField('Country', event.target.value)}
+              value={checkoutForm.country}
+              onChange={(event) => setField('country', event.target.value)}
             />
           </label>
           <button type="button" onClick={clearFields}>
@@ -358,11 +380,11 @@ function App() {
         {checkoutResult && (
           <div
             className={`status ${
-              checkoutResult.checkoutStatus === 1 ? 'status--success' : 'status--error'
+              checkoutResult.checkoutStauts === 1 ? 'status--success' : 'status--error'
             }`}
           >
             <strong>
-              {checkoutResult.checkoutStatus === 1
+              {checkoutResult.checkoutStauts === 1
                 ? 'Order confirmed.'
                 : 'Order could not be completed.'}
             </strong>

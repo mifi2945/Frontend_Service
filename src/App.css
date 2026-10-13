@@ -38,6 +38,7 @@ main { flex: 1; }
 .section-heading { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 28px; }
 .section-heading h2 { margin: 9px 0 0; color: var(--ink); font: 600 38px/1 var(--display); }
 .section-heading > span { color: var(--muted); font: 12px var(--mono); }
+.checkout-summary { display: flex; flex-direction: column; align-items: end; gap: 6px; color: var(--muted); font: 12px var(--mono); text-align: right; }
 .search-form { display: flex; gap: 8px; margin-bottom: 28px; }
 .search-form input, .checkout-form input { min-width: 0; width: 100%; padding: 13px 14px; border: 1px solid var(--line); color: var(--ink); background: var(--paper); font: 14px var(--sans); box-sizing: border-box; }
 .search-form input:focus, .checkout-form input:focus { outline: 2px solid var(--accent); outline-offset: 2px; }

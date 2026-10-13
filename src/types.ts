@@ -11,17 +11,21 @@ export interface Product {
 export interface CheckoutForm {
   cardno: string
   securityCode: string
-  Expdate: string
-  Address: string
-  Street: string
-  Country: string
+  expDate: string
+  address: string
+  street: string
+  country: string
 }
 
 export interface CheckoutResponse {
-  checkoutStatus: number
+  checkoutStauts: number
   Shippingid?: number | string
   Chargedfor?: number
   [key: string]: unknown
 }
 
-export type ApiService = 'catalog' | 'cart' | 'recommendations' | 'checkout'
+export interface ShippingCost {
+  "shippingCost": number
+}
+
+export type ApiService = 'catalog' | 'cart' | 'recommendations' | 'checkout' | 'shipping'
