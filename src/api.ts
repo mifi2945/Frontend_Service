@@ -1,4 +1,7 @@
 import type { ApiService, CheckoutForm, CheckoutResponse, Product, ShippingCost } from './types'
+import {Logging, Severity} from '@google-cloud/logging'
+
+const logging = new Logging()
 
 const serviceVariables: Record<ApiService, string> = {
   catalog: 'VITE_CATALOG_API_URL',
@@ -19,11 +22,30 @@ function getUrl(service: ApiService, path: string): string {
   return `${getBaseUrl(service)}${path}`
 }
 
+function generateCorrelationId(): string {
+  const id = crypto.randomUUID()
+  return id
+}
+
+async function generateLog(corr_id: string, msg: string, level: number) {
+  const log_text = `[${new Date()}, ${corr_id}, frontend]: ${msg}`
+  const log = logging.log('frontend-log')
+  const metadata = {
+    severity: level
+  }
+
+  const entry = log.entry(metadata, log_text)
+  await log.write(entry);
+}
+
 async function request<T>(service: ApiService, path: string, options?: RequestInit): Promise<T> {
+  const correlationId = generateCorrelationId()
+
   const response = await fetch(getUrl(service, path), {
     ...options,
     headers: {
       'Content-Type': 'application/json',
+      'Correlation-Id': correlationId,
       ...options?.headers,
     },
   })
@@ -36,10 +58,15 @@ async function request<T>(service: ApiService, path: string, options?: RequestIn
     } catch {
       // Keep the HTTP status when the service has no JSON error body.
     }
+    generateLog(correlationId, `outbound to ${service}/${path} ${message}`, Severity.error)
     throw new Error(message)
   }
 
-  if (response.status === 204) return undefined as T
+  if (response.status === 204) {
+    generateLog(correlationId, `outbound to ${service}/${path}`, Severity.info)
+    return undefined as T
+  }
+  generateLog(correlationId, `outbound to ${service}/${path}`, Severity.info)
   return (await response.json()) as T
 }
 

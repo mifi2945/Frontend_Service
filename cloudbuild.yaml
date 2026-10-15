@@ -34,7 +34,7 @@ steps:
   - ${_SERVICE}
   - --image=us-central1-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO}/${_SERVICE}:${SHORT_SHA}
   - --region=${_REGION}
-  - --service-account=cloud-run-service-account@engaged-upgrade-508218-r4.iam.gserviceaccount.com
+  - --service-account=log-writer-service-account@engaged-upgrade-508218-r4.iam.gserviceaccount.com
   - --update-env-vars=CATALOG_API_URL=${_CATALOG_API_URL},CART_API_URL=${_CART_API_URL},RECOMMENDATIONS_API_URL=${_RECOMMENDATIONS_API_URL},CHECKOUT_API_URL=${_CHECKOUT_API_URL},SHIPPING_API_URL=${_SHIPPING_API_URL}
   - --platform=managed
   - --quiet
